@@ -8,7 +8,7 @@ import {
     Radio,
     Input,
 } from "@telegram-apps/telegram-ui";
-import { type FC } from "react";
+import { useState, type FC } from "react";
 
 import { Page } from "@/components/Page.tsx";
 import { useNavigate } from "react-router-dom";
@@ -58,11 +58,16 @@ export const FieldPage: FC = () => {
             label: "Retail",
         },
         {
-            id: "other",
+            id: "private",
             label: "None of your fkin business",
+        },
+        {
+            id: "others",
+            label: "Other",
         },
     ];
 
+    const [selectedField, setSelectedField] = useState("");
     // const categories = [...new Set(AREAS_OF_INTEREST.map((option) => option.category))];
 
     return (
@@ -98,7 +103,15 @@ export const FieldPage: FC = () => {
                                         placeItems: "center",
                                     }}
                                 >
-                                    <Radio name="field" id={topic.label} />
+                                    <Radio
+                                        name="field"
+                                        id={topic.label}
+                                        value={topic.id}
+                                        checked={selectedField === topic.id}
+                                        onChange={(e) =>
+                                            setSelectedField(e.target.value)
+                                        }
+                                    />
                                 </div>
                             }
                         >
@@ -106,7 +119,9 @@ export const FieldPage: FC = () => {
                         </Chip>
                     ))}
                 </div>
-                <Input header="Other" />
+                {selectedField === "others" && (
+                    <Input header="Please state which:" />
+                )}
                 <div style={{ height: 72 }} />
 
                 <FixedLayout
