@@ -14,21 +14,6 @@ import { closeMiniApp } from "@telegram-apps/sdk-react";
 
 import { Page } from "@/components/Page.tsx";
 
-declare global {
-    interface Window {
-        Telegram: {
-            WebApp: {
-                close: () => void;
-                BackButton: {
-                    show: () => void;
-                    hide: () => void;
-                    onClick: (callback: () => void) => void;
-                };
-            };
-        };
-    }
-}
-
 export const SettingsPage: FC = () => {
     return (
         <Page back={true}>
@@ -38,8 +23,10 @@ export const SettingsPage: FC = () => {
                     margin: "0 16px", // Adds horizontal margin
                 }}
             >
-                <Steps count={3} progress={3} />
-                <LargeTitle weight="3">Settings</LargeTitle>
+                <Steps count={6} progress={6} />
+                <LargeTitle weight="3">
+                    How would you like to configure AI News?
+                </LargeTitle>
                 <Headline
                     weight="3"
                     style={{

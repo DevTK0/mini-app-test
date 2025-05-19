@@ -166,9 +166,11 @@ export const TopicsPage: FC = () => {
                     margin: "0 16px", // Adds horizontal margin
                 }}
             >
-                <Steps count={3} progress={1} />
+                <Steps count={6} progress={3} />
 
-                <LargeTitle weight="3">Select Topics</LargeTitle>
+                <LargeTitle weight="3">
+                    What topics are you interested in?
+                </LargeTitle>
 
                 <div
                     style={{

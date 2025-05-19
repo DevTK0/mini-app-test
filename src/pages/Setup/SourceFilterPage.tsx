@@ -97,8 +97,10 @@ export const SourceFilterPage: FC = () => {
                     margin: "0 16px", // Adds horizontal margin
                 }}
             >
-                <Steps count={3} progress={2} />
-                <LargeTitle weight="3">Select Sources</LargeTitle>
+                <Steps count={6} progress={4} />
+                <LargeTitle weight="3">
+                    Which sources would you like to receive news from?
+                </LargeTitle>
                 <div
                     style={{
                         display: "flex",
@@ -172,7 +174,7 @@ export const SourceFilterPage: FC = () => {
                         size="m"
                         stretched
                         onClick={() => {
-                            navigate("/settings");
+                            navigate("/difficulty");
                             window.scrollTo({
                                 top: 0,
                                 left: 0,
