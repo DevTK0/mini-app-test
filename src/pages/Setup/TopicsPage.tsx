@@ -203,10 +203,19 @@ export const TopicsPage: FC = () => {
                                         mode="mono"
                                         Component="label"
                                         before={
-                                            <Multiselectable
-                                                name={topic.label}
-                                                id={topic.label}
-                                            />
+                                            <div
+                                                style={{
+                                                    width: "20px",
+                                                    height: "20px",
+                                                    display: "grid",
+                                                    placeItems: "center",
+                                                }}
+                                            >
+                                                <Multiselectable
+                                                    name={topic.label}
+                                                    id={topic.label}
+                                                />
+                                            </div>
                                         }
                                     >
                                         {topic.label}
