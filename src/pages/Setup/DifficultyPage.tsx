@@ -4,9 +4,6 @@ import {
     FixedLayout,
     Button,
     LargeTitle,
-    Chip,
-    Radio,
-    Input,
     Select,
 } from "@telegram-apps/telegram-ui";
 import { type FC } from "react";
