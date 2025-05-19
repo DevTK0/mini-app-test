@@ -1,6 +1,7 @@
 import type { ComponentType, JSX } from "react";
 
 import { IndexPage } from "@/pages/IndexPage/IndexPage";
+import { ReaderPage } from "@/pages/ReaderPage/ReaderPage";
 
 interface Route {
     path: string;
@@ -9,4 +10,7 @@ interface Route {
     icon?: JSX.Element;
 }
 
-export const routes: Route[] = [{ path: "/", Component: IndexPage }];
+export const routes: Route[] = [
+    { path: "/", Component: IndexPage },
+    { path: "/theme-params", Component: ReaderPage },
+];
