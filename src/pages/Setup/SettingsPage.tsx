@@ -10,7 +10,24 @@ import {
 } from "@telegram-apps/telegram-ui";
 import { type FC } from "react";
 
+import { closeMiniApp } from "@telegram-apps/sdk-react";
+
 import { Page } from "@/components/Page.tsx";
+
+declare global {
+    interface Window {
+        Telegram: {
+            WebApp: {
+                close: () => void;
+                BackButton: {
+                    show: () => void;
+                    hide: () => void;
+                    onClick: (callback: () => void) => void;
+                };
+            };
+        };
+    }
+}
 
 export const SettingsPage: FC = () => {
     return (
@@ -44,7 +61,7 @@ export const SettingsPage: FC = () => {
                         padding: 16,
                     }}
                 >
-                    <Button size="m" stretched>
+                    <Button size="m" stretched onClick={() => closeMiniApp()}>
                         Submit
                     </Button>
                 </FixedLayout>

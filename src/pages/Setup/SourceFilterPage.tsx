@@ -173,6 +173,11 @@ export const SourceFilterPage: FC = () => {
                         stretched
                         onClick={() => {
                             navigate("/settings");
+                            window.scrollTo({
+                                top: 0,
+                                left: 0,
+                                behavior: "smooth",
+                            });
                         }}
                     >
                         Next

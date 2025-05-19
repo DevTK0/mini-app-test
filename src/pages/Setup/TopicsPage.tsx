@@ -237,6 +237,11 @@ export const TopicsPage: FC = () => {
                         stretched
                         onClick={() => {
                             navigate("/filters");
+                            window.scrollTo({
+                                top: 0,
+                                left: 0,
+                                behavior: "smooth",
+                            });
                         }}
                     >
                         Next
