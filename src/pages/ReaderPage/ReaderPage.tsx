@@ -1,13 +1,85 @@
 import { Page } from "@/components/Page";
-import { Section, List, FixedLayout, Button } from "@telegram-apps/telegram-ui";
+import {
+    Section,
+    List,
+    FixedLayout,
+    Button,
+    Progress,
+    Spinner,
+} from "@telegram-apps/telegram-ui";
 import { useState, type FC } from "react";
+import {
+    FaAngleLeft,
+    FaAngleRight,
+    FaThumbsDown,
+    FaThumbsUp,
+} from "react-icons/fa";
+
+interface PageData {
+    url: string;
+    vote: "up" | "down" | null;
+}
 
 export const ReaderPage: FC = () => {
-    const [isActive, setIsActive] = useState(false);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const handleVote = () => {
-        setIsActive(true);
+    const [pages, setPages] = useState<PageData[]>([
+        {
+            url: "https://www.artificialintelligence-news.com/news/will-the-ai-boom-fuel-a-global-energy-crisis/",
+            vote: null,
+        },
+        {
+            url: "https://openai.com/index/introducing-codex/",
+            vote: null,
+        },
+        {
+            url: "https://venturebeat.com/ai/microsoft-just-launched-an-ai-that-discovered-a-new-chemical-in-200-hours-instead-of-years/",
+            vote: null,
+        },
+        {
+            url: "https://www.wired.com/story/how-to-watch-google-io-2025/",
+            vote: null,
+        },
+        {
+            url: "https://www.anthropic.com/news/tracing-thoughts-language-model",
+            vote: null,
+        },
+        {
+            url: "https://www.anthropic.com/news/claude-3-7-sonnet",
+            vote: null,
+        },
+    ]);
+
+    const handleVote = (voteType: "up" | "down") => {
+        setPages((currentPages) => {
+            return currentPages.map((page, index) => {
+                if (index === currentIndex) {
+                    // Toggle vote if clicking the same button again
+                    const newVote = page.vote === voteType ? null : voteType;
+                    return { ...page, vote: newVote };
+                }
+                return page;
+            });
+        });
     };
+
+    const goToPrevious = () => {
+        setIsLoading(true);
+        setCurrentIndex((prevIndex) =>
+            prevIndex > 0 ? prevIndex - 1 : prevIndex
+        );
+    };
+
+    const goToNext = () => {
+        setIsLoading(true);
+        setCurrentIndex((prevIndex) =>
+            prevIndex < pages.length - 1 ? prevIndex + 1 : prevIndex
+        );
+    };
+
+    const progressValue = ((currentIndex + 1) / pages.length) * 100;
+    const currentVote = pages[currentIndex].vote;
 
     return (
         <Page back={true}>
@@ -17,21 +89,38 @@ export const ReaderPage: FC = () => {
                         style={{
                             width: "100%",
                             height: "calc(100vh - 80px)", // Adjust height to leave space for voting section
-                            marginBottom: "16px",
-                            position: "relative",
                         }}
                     >
+                        {isLoading && (
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    top: 0,
+                                    left: 0,
+                                    right: 0,
+                                    bottom: 0,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    // background: "rgba(255, 255, 255, 0.8)", // Semi-transparent background
+                                    zIndex: 1,
+                                    borderRadius: "8px",
+                                }}
+                            >
+                                <Spinner size="l" />
+                            </div>
+                        )}
                         <iframe
-                            src="https://openai.com/index/introducing-codex/"
+                            src={pages[currentIndex].url}
                             style={{
                                 width: "100%",
                                 height: "100%",
                                 border: "none",
                                 borderRadius: "8px",
-                                backgroundColor: "#fff",
                             }}
                             title="Content"
                             allowFullScreen
+                            onLoad={() => setIsLoading(false)}
                         />
                     </div>
 
@@ -49,43 +138,74 @@ export const ReaderPage: FC = () => {
                                 gap: "12px",
                             }}
                         >
+                            <Progress
+                                value={progressValue}
+                                style={{
+                                    flex: 1,
+                                }}
+                            />{" "}
+                            <br />
+                        </div>
+                        <div
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                width: "100%",
+                                gap: "12px",
+                            }}
+                        >
+                            <Button
+                                mode="bezeled"
+                                size="m"
+                                onClick={goToPrevious}
+                                disabled={currentIndex === 0}
+                                style={{
+                                    flex: 0.5,
+                                }}
+                            >
+                                <FaAngleLeft />
+                            </Button>
                             <Button
                                 size="m"
-                                onClick={() => handleVote()}
+                                mode={
+                                    currentVote === "up" ? "outline" : "bezeled"
+                                }
+                                onClick={() => handleVote("up")}
                                 style={{
                                     flex: 1,
                                 }}
                             >
-                                👍🏻
+                                <FaThumbsUp />
                             </Button>
                             <Button
                                 size="m"
-                                onClick={() => handleVote()}
+                                mode={
+                                    currentVote === "down"
+                                        ? "outline"
+                                        : "bezeled"
+                                }
+                                onClick={() => handleVote("down")}
                                 style={{
                                     flex: 1,
                                 }}
                             >
-                                👎🏻
+                                <FaThumbsDown />
                             </Button>
-                            <div
+                            <Button
+                                mode="bezeled"
+                                size="m"
+                                onClick={goToNext}
+                                disabled={
+                                    currentIndex === pages.length - 1 ||
+                                    isLoading
+                                }
                                 style={{
-                                    width: "48px",
-                                    height: "48px",
-                                    borderRadius: "50%",
-                                    backgroundColor: isActive
-                                        ? "#4CAF50"
-                                        : "#EAEAEA",
-                                    color: isActive ? "blue" : "#000",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    fontSize: "16px",
-                                    fontWeight: "bold",
-                                    transition: "background-color 0.3s ease",
+                                    flex: 0.5,
                                 }}
                             >
-                                50
-                            </div>
+                                <FaAngleRight />
+                            </Button>
                         </div>
                     </FixedLayout>
                 </Section>

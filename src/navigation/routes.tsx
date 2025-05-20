@@ -23,5 +23,5 @@ export const routes: Route[] = [
     { path: "/difficulty", Component: DifficultyPage },
     { path: "/settings", Component: SettingsPage },
 
-    { path: "/theme-params", Component: ReaderPage },
+    { path: "/reader", Component: ReaderPage },
 ];
