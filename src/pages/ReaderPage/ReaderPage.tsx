@@ -104,7 +104,7 @@ export const ReaderPage: FC = () => {
                                     justifyContent: "center",
                                     // background: "rgba(255, 255, 255, 0.8)", // Semi-transparent background
                                     zIndex: 1,
-                                    borderRadius: "8px",
+                                    // borderRadius: "8px",
                                 }}
                             >
                                 <Spinner size="l" />
@@ -116,7 +116,7 @@ export const ReaderPage: FC = () => {
                                 width: "100%",
                                 height: "100%",
                                 border: "none",
-                                borderRadius: "8px",
+                                // borderRadius: "8px",
                             }}
                             title="Content"
                             allowFullScreen
@@ -143,9 +143,10 @@ export const ReaderPage: FC = () => {
                                 style={{
                                     flex: 1,
                                 }}
-                            />{" "}
+                            />
                             <br />
                         </div>
+
                         <div
                             style={{
                                 display: "flex",

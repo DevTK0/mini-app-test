@@ -8,13 +8,55 @@ import {
     Multiselectable,
     Headline,
 } from "@telegram-apps/telegram-ui";
-import { type FC } from "react";
+import { useEffect, useState, type FC } from "react";
 
 import { Page } from "@/components/Page.tsx";
 import { useNavigate } from "react-router-dom";
+// import { retrieveLaunchParams } from "@telegram-apps/sdk-react";
+import createClient from "openapi-fetch";
+
+import type { paths } from "@/api/schema";
 
 export const TopicsPage: FC = () => {
     const navigate = useNavigate();
+    const [userData, setUserData] = useState<any>(null);
+    // const launchParams = retrieveLaunchParams();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const client = createClient<paths>({
+                headers: {
+                    "ngrok-skip-browser-warning": "true",
+                },
+                baseUrl: "https://8f3b-137-132-26-145.ngrok-free.app",
+            });
+
+            try {
+                const {
+                    data, // only present if 2XX response
+                    error, // only present if 4XX or 5XX response
+                } = await client.GET("/getuser", {
+                    params: {
+                        query: {
+                            telegram_id: 7639375038,
+                        },
+                    },
+                });
+
+                if (data) {
+                    setUserData(data);
+                } else if (error) {
+                    console.error("Error fetching data:", error);
+                }
+
+                console.log("test", data, error);
+            } catch (err) {
+                console.log("error", err);
+            }
+        };
+
+        fetchData();
+    }, []);
 
     const AI_TOPICS = [
         // Core AI & ML
@@ -160,6 +202,11 @@ export const TopicsPage: FC = () => {
 
     return (
         <Page back={true}>
+            <div>
+                {/* Adjust the property access based on your actual API response structure */}
+                <div>User Data: {JSON.stringify(userData)}</div>
+            </div>
+
             <List
                 style={{
                     padding: "16px",

@@ -6,6 +6,7 @@
   "homepage": "https://telegram-mini-apps.github.io/reactjs-template",
   "scripts": {
     "deploy": "gh-pages -d dist",
+    "gen:types": "npx openapi-typescript http://127.0.0.1:8000//openapi.json -o ./src/api/schema.d.ts",
     "dev": "vite",
     "dev:https": "cross-env HTTPS=true vite",
     "build": "tsc --noEmit && vite build",
@@ -19,6 +20,7 @@
     "@telegram-apps/telegram-ui": "^2.1.8",
     "@tonconnect/ui-react": "^2.1.0",
     "eruda": "^3.4.1",
+    "openapi-fetch": "^0.14.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.5.0",
