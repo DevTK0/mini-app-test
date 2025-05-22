@@ -79,6 +79,24 @@ export interface components {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
         };
+        /** User */
+        User: {
+            /** Id */
+            id?: number;
+            /** Telegram Id */
+            telegram_id: number;
+            /** Chat Id */
+            chat_id: number;
+            /**
+             * Join Dt
+             * Format: date-time
+             */
+            join_dt?: string;
+            /** Settings */
+            settings?: {
+                [key: string]: string[];
+            };
+        };
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -136,7 +154,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["User"] | null;
                 };
             };
             /** @description Validation Error */
@@ -169,7 +187,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": {
+                        [key: string]: string;
+                    };
                 };
             };
             /** @description Validation Error */

@@ -7,56 +7,38 @@ import {
     Chip,
     Multiselectable,
 } from "@telegram-apps/telegram-ui";
-import { type FC } from "react";
+import { useState, type FC } from "react";
 
 import { Page } from "@/components/Page.tsx";
 import { useNavigate } from "react-router-dom";
+import { INDUSTRY } from "@/helpers/defaults";
+import { useStore } from "@tanstack/react-store";
+import { store } from "@/helpers/stores";
 
 export const IndustryPage: FC = () => {
     const navigate = useNavigate();
 
-    const AREAS_OF_INTEREST = [
-        {
-            id: "finance",
-            label: "Finance",
-        },
-        {
-            id: "maritime",
-            label: "Maritime",
-        },
-        {
-            id: "transport",
-            label: "Transport",
-        },
-        {
-            id: "medical",
-            label: "Medical",
-        },
-        {
-            id: "technology",
-            label: "Technology",
-        },
-        {
-            id: "education",
-            label: "Education",
-        },
-        {
-            id: "environment",
-            label: "Environment",
-        },
-        {
-            id: "real_estate",
-            label: "Real Estate",
-        },
-        {
-            id: "manufacturing",
-            label: "Manufacturing",
-        },
-        {
-            id: "retail",
-            label: "Retail",
-        },
-    ];
+    const industries = useStore(store, (state) => state.industries);
+    const [selectedIndustries, setSelectedIndustries] = useState<Set<string>>(
+        industries ?? new Set<string>()
+    );
+
+    const updateIndustries = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const label = event.target.name;
+
+        setSelectedIndustries((prev) => {
+            const newSet = new Set(prev);
+            newSet.has(label) ? newSet.delete(label) : newSet.add(label);
+
+            // Update store
+            store.setState((state) => ({
+                ...state,
+                industries: newSet,
+            }));
+
+            return newSet;
+        });
+    };
 
     // const categories = [...new Set(AREAS_OF_INTEREST.map((option) => option.category))];
 
@@ -81,7 +63,7 @@ export const IndustryPage: FC = () => {
                         flexWrap: "wrap",
                     }}
                 >
-                    {AREAS_OF_INTEREST.map((topic) => (
+                    {INDUSTRY.map((topic) => (
                         <Chip
                             key={topic.id}
                             mode="mono"
@@ -98,6 +80,10 @@ export const IndustryPage: FC = () => {
                                     <Multiselectable
                                         name={topic.label}
                                         id={topic.label}
+                                        checked={selectedIndustries.has(
+                                            topic.label
+                                        )}
+                                        onChange={updateIndustries}
                                     />
                                 </div>
                             }

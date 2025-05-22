@@ -8,85 +8,40 @@ import {
     Chip,
     Headline,
 } from "@telegram-apps/telegram-ui";
-import { type FC } from "react";
+import { useState, type FC } from "react";
 
 import { Page } from "@/components/Page.tsx";
 import { useNavigate } from "react-router-dom";
+import { useStore } from "@tanstack/react-store";
+import { store } from "@/helpers/stores";
+import { SOURCE_OPTIONS } from "@/helpers/defaults";
 
 export const SourceFilterPage: FC = () => {
     const navigate = useNavigate();
 
-    const CONTENT_SOURCE_OPTIONS = [
-        // Company Blogs
-        { id: "openai", label: "OpenAI Blog", category: "Company Blogs" },
-        {
-            id: "deepmind",
-            label: "Google DeepMind",
-            category: "Company Blogs",
-        },
-        { id: "anthropic", label: "Anthropic", category: "Company Blogs" },
-        { id: "meta_ai", label: "Meta AI", category: "Company Blogs" },
-        { id: "nvidia_ai", label: "NVIDIA AI", category: "Company Blogs" },
-        {
-            id: "aws_ml",
-            label: "AWS Machine Learning",
-            category: "Company Blogs",
-        },
-        {
-            id: "microsoft_research",
-            label: "Microsoft Research",
-            category: "Company Blogs",
-        },
+    const sources = useStore(store, (state) => state.sources);
+    const [selectedSources, setSelectedSources] =
+        useState<Set<string>>(sources);
 
-        // Research Blogs
-        {
-            id: "bair",
-            label: "Berkeley AI Research (BAIR)",
-            category: "Research Blogs",
-        },
-        { id: "mit_ai", label: "MIT AI News", category: "Research Blogs" },
+    const updateSources = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const label = event.target.name;
 
-        // Papers
-        { id: "vitalab", label: "VITALab", category: "Papers" },
-        {
-            id: "papers_with_code",
-            label: "Papers With Code",
-            category: "Papers",
-        },
-        { id: "arxiv", label: "arXiv", category: "Papers" },
+        setSelectedSources((prev) => {
+            const newSet = new Set(prev);
+            newSet.has(label) ? newSet.delete(label) : newSet.add(label);
 
-        // Opinion & News
-        {
-            id: "techcrunch_ai",
-            label: "TechCrunch AI",
-            category: "Opinion & News",
-        },
-        {
-            id: "venturebeat_ai",
-            label: "VentureBeat AI",
-            category: "Opinion & News",
-        },
-        {
-            id: "marktechpost",
-            label: "Marktechpost",
-            category: "Opinion & News",
-        },
+            // Update store
+            store.setState((state) => ({
+                ...state,
+                sources: newSet,
+            }));
 
-        // AI Singapore
-        {
-            id: "aisg_governance",
-            label: "AI Singapore Governance Updates",
-            category: "AI Singapore",
-        },
-        {
-            id: "aisg_roundtable",
-            label: "AI Singapore Roundtable",
-            category: "AI Singapore",
-        },
-    ];
+            return newSet;
+        });
+    };
 
     const categories = [
-        ...new Set(CONTENT_SOURCE_OPTIONS.map((option) => option.category)),
+        ...new Set(SOURCE_OPTIONS.map((option) => option.category)),
     ];
 
     return (
@@ -133,7 +88,7 @@ export const SourceFilterPage: FC = () => {
                                         flexWrap: "wrap",
                                     }}
                                 >
-                                    {CONTENT_SOURCE_OPTIONS.filter(
+                                    {SOURCE_OPTIONS.filter(
                                         (topic) => topic.category === category
                                     ).map((topic) => (
                                         <Chip
@@ -152,6 +107,10 @@ export const SourceFilterPage: FC = () => {
                                                     <Multiselectable
                                                         name={topic.label}
                                                         id={topic.label}
+                                                        checked={selectedSources.has(
+                                                            topic.label
+                                                        )}
+                                                        onChange={updateSources}
                                                     />
                                                 </div>
                                             }

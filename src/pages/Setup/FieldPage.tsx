@@ -12,63 +12,27 @@ import { useState, type FC } from "react";
 
 import { Page } from "@/components/Page.tsx";
 import { useNavigate } from "react-router-dom";
+import { store } from "@/helpers/stores";
+import { useStore } from "@tanstack/react-store";
+import { FIELD } from "@/helpers/defaults";
 
 export const FieldPage: FC = () => {
     const navigate = useNavigate();
 
-    const FIELD = [
-        {
-            id: "finance",
-            label: "Finance",
-        },
-        {
-            id: "maritime",
-            label: "Maritime",
-        },
-        {
-            id: "transport",
-            label: "Transport",
-        },
-        {
-            id: "medical",
-            label: "Medical",
-        },
-        {
-            id: "technology",
-            label: "Technology",
-        },
-        {
-            id: "education",
-            label: "Education",
-        },
-        {
-            id: "environment",
-            label: "Environment",
-        },
-        {
-            id: "real_estate",
-            label: "Real Estate",
-        },
-        {
-            id: "manufacturing",
-            label: "Manufacturing",
-        },
-        {
-            id: "retail",
-            label: "Retail",
-        },
-        {
-            id: "private",
-            label: "None of your fkin business",
-        },
-        {
-            id: "others",
-            label: "Other",
-        },
-    ];
+    const field = useStore(store, (state) => state.field);
+    const [selectedField, setSelectedField] = useState<string>(field ?? "");
 
-    const [selectedField, setSelectedField] = useState("");
-    // const categories = [...new Set(AREAS_OF_INTEREST.map((option) => option.category))];
+    const updateField = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const value = event.target.name;
+
+        setSelectedField(value);
+
+        // Update store
+        store.setState((state) => ({
+            ...state,
+            field: value,
+        }));
+    };
 
     return (
         <Page back={true}>
@@ -104,13 +68,11 @@ export const FieldPage: FC = () => {
                                     }}
                                 >
                                     <Radio
-                                        name="field"
+                                        name={topic.id}
                                         id={topic.label}
                                         value={topic.id}
                                         checked={selectedField === topic.id}
-                                        onChange={(e) =>
-                                            setSelectedField(e.target.value)
-                                        }
+                                        onChange={updateField}
                                     />
                                 </div>
                             }
