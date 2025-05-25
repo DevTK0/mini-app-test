@@ -10,7 +10,7 @@ import {
 } from "@telegram-apps/telegram-ui";
 import { useEffect, useState, type FC } from "react";
 
-import { closeMiniApp, retrieveLaunchParams } from "@telegram-apps/sdk-react";
+import { closeMiniApp, useLaunchParams } from "@telegram-apps/sdk-react";
 
 import { Page } from "@/components/Page.tsx";
 import createClient from "openapi-fetch";
@@ -36,12 +36,12 @@ export const SettingsPage: FC = () => {
         headers: {
             "ngrok-skip-browser-warning": "true",
         },
-        baseUrl: "https://f0a0-137-132-211-139.ngrok-free.app",
+        baseUrl: "http://127.0.0.1:8000",
     });
 
     useEffect(() => {
         const fetchUser = async () => {
-            const launchParams = retrieveLaunchParams();
+            const launchParams = useLaunchParams();
             const telegramId = launchParams?.tgWebAppData?.user?.id;
 
             if (!telegramId) {

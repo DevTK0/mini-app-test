@@ -1,12 +1,13 @@
 import type { ComponentType, JSX } from "react";
 
-import { TopicsPage } from "@/pages/Setup/TopicsPage";
-import { ReaderPage } from "@/pages/ReaderPage/ReaderPage";
-import { SettingsPage as SettingsPage } from "@/pages/Setup/SettingsPage";
-import { SourceFilterPage } from "@/pages/Setup/SourceFilterPage";
-import { IndustryPage } from "@/pages/Setup/IndustryPage";
-import { FieldPage } from "@/pages/Setup/FieldPage";
-import { DifficultyPage } from "@/pages/Setup/DifficultyPage";
+import { TopicsPage } from "@/pages/Setup/steps/TopicsPage";
+import { ReaderPage } from "@/pages/Reader/ReaderPage";
+import { SettingsPage as SettingsPage } from "@/pages/Setup/steps/SettingsPage";
+import { SourceFilterPage } from "@/pages/Setup/steps/SourceFilterPage";
+import { IndustryPage } from "@/pages/Setup/steps/IndustryPage";
+import { FieldPage } from "@/pages/Setup/steps/FieldPage";
+import { DifficultyPage } from "@/pages/Setup/steps/DifficultyPage";
+import { SetupPage } from "@/pages/Setup/SetupPage";
 
 interface Route {
     path: string;
@@ -16,6 +17,7 @@ interface Route {
 }
 
 export const routes: Route[] = [
+    { path: "/setup", Component: SetupPage },
     { path: "/field", Component: FieldPage },
     { path: "/industry", Component: IndustryPage },
     { path: "/topics", Component: TopicsPage },

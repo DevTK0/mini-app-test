@@ -1,4 +1,10 @@
+import { paths } from "@/api/schema";
 import { Page } from "@/components/Page";
+import {
+    isMiniAppDark,
+    useLaunchParams,
+    useSignal,
+} from "@telegram-apps/sdk-react";
 import {
     Section,
     List,
@@ -7,7 +13,8 @@ import {
     Progress,
     Spinner,
 } from "@telegram-apps/telegram-ui";
-import { useState, type FC } from "react";
+import createClient from "openapi-fetch";
+import { useEffect, useState, type FC } from "react";
 import {
     FaAngleLeft,
     FaAngleRight,
@@ -23,33 +30,53 @@ interface PageData {
 export const ReaderPage: FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
-
+    const { tgWebAppThemeParams: theme } = useLaunchParams();
+    const isDark = useSignal(isMiniAppDark);
     const [pages, setPages] = useState<PageData[]>([
         {
-            url: "https://www.artificialintelligence-news.com/news/will-the-ai-boom-fuel-a-global-energy-crisis/",
-            vote: null,
-        },
-        {
-            url: "https://openai.com/index/introducing-codex/",
-            vote: null,
-        },
-        {
-            url: "https://venturebeat.com/ai/microsoft-just-launched-an-ai-that-discovered-a-new-chemical-in-200-hours-instead-of-years/",
-            vote: null,
-        },
-        {
-            url: "https://www.wired.com/story/how-to-watch-google-io-2025/",
-            vote: null,
-        },
-        {
-            url: "https://www.anthropic.com/news/tracing-thoughts-language-model",
-            vote: null,
-        },
-        {
-            url: "https://www.anthropic.com/news/claude-3-7-sonnet",
+            url: "",
             vote: null,
         },
     ]);
+
+    const client = createClient<paths>({
+        headers: {
+            "ngrok-skip-browser-warning": "true",
+        },
+        baseUrl: "http://127.0.0.1:8000",
+    });
+
+    useEffect(() => {
+        const fetchRec = async () => {
+            const launchParams = useLaunchParams();
+            const telegramId = launchParams?.tgWebAppData?.user?.id;
+
+            if (!telegramId) {
+                console.error("No Telegram ID found in launch params");
+                return;
+            }
+
+            try {
+                console.log(client);
+                // const { data, error } = await client.GET("/getuser", {
+                //     params: {
+                //         query: {
+                //             telegram_id: telegramId,
+                //         },
+                //     },
+                // });
+                // if (data) {
+                //     setPages(data);
+                // } else if (error) {
+                //     console.error("Error fetching user data:", error);
+                // }
+            } catch (err) {
+                console.error("Error in API call:", err);
+            }
+        };
+
+        fetchRec();
+    }, []);
 
     const handleVote = (voteType: "up" | "down") => {
         setPages((currentPages) => {
@@ -88,7 +115,7 @@ export const ReaderPage: FC = () => {
                     <div
                         style={{
                             width: "100%",
-                            height: "calc(100vh - 80px)", // Adjust height to leave space for voting section
+                            height: "calc(100vh - 130px)", // Adjust height to leave space for voting section
                         }}
                     >
                         {isLoading && (
@@ -116,7 +143,6 @@ export const ReaderPage: FC = () => {
                                 width: "100%",
                                 height: "100%",
                                 border: "none",
-                                // borderRadius: "8px",
                             }}
                             title="Content"
                             allowFullScreen
@@ -131,11 +157,46 @@ export const ReaderPage: FC = () => {
                     >
                         <div
                             style={{
+                                backgroundColor: theme.bg_color,
+                                padding: 5,
+                                borderRadius: "10px",
+                                display: "flex",
+                                alignItems: "center",
+                            }}
+                        >
+                            <Button
+                                mode={false ? "gray" : "bezeled"}
+                                style={{
+                                    height: "24px",
+                                    padding: "0 8px",
+                                    minWidth: "auto",
+                                }}
+                            >
+                                +100
+                            </Button>
+                            <Button
+                                mode="plain"
+                                style={{
+                                    color: isDark ? "white" : "black",
+                                    width: "100%",
+                                    height: "24px",
+                                    padding: "0 10px",
+                                    overflow: "hidden",
+                                    whiteSpace: "nowrap",
+                                    textOverflow: "ellipsis",
+                                }}
+                            >
+                                http://example.com/
+                            </Button>
+                        </div>
+
+                        <div
+                            style={{
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "space-between",
-                                width: "100%",
-                                gap: "12px",
+                                // width: "100%",
+                                padding: 5,
                             }}
                         >
                             <Progress
@@ -157,8 +218,8 @@ export const ReaderPage: FC = () => {
                             }}
                         >
                             <Button
-                                mode="bezeled"
-                                size="m"
+                                mode="plain"
+                                size="s"
                                 onClick={goToPrevious}
                                 disabled={currentIndex === 0}
                                 style={{
@@ -168,9 +229,9 @@ export const ReaderPage: FC = () => {
                                 <FaAngleLeft />
                             </Button>
                             <Button
-                                size="m"
+                                size="s"
                                 mode={
-                                    currentVote === "up" ? "outline" : "bezeled"
+                                    currentVote === "up" ? "bezeled" : "plain"
                                 }
                                 onClick={() => handleVote("up")}
                                 style={{
@@ -180,11 +241,9 @@ export const ReaderPage: FC = () => {
                                 <FaThumbsUp />
                             </Button>
                             <Button
-                                size="m"
+                                size="s"
                                 mode={
-                                    currentVote === "down"
-                                        ? "outline"
-                                        : "bezeled"
+                                    currentVote === "down" ? "bezeled" : "plain"
                                 }
                                 onClick={() => handleVote("down")}
                                 style={{
@@ -194,8 +253,8 @@ export const ReaderPage: FC = () => {
                                 <FaThumbsDown />
                             </Button>
                             <Button
-                                mode="bezeled"
-                                size="m"
+                                mode="plain"
+                                size="s"
                                 onClick={goToNext}
                                 disabled={
                                     currentIndex === pages.length - 1 ||

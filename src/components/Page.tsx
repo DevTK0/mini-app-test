@@ -5,7 +5,7 @@ import {
     showBackButton,
 } from "@telegram-apps/sdk-react";
 import { type PropsWithChildren, useEffect } from "react";
-import { Debugger } from "./Debugger/debugger";
+// import { Debugger } from "./Debugger/debugger";
 
 export function Page({
     children,
@@ -30,7 +30,7 @@ export function Page({
 
     return (
         <>
-            <Debugger />
+            {/* <Debugger /> */}
             {children}
         </>
     );
