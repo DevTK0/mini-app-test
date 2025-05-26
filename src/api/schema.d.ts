@@ -27,6 +27,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/createone": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Createone */
+        post: operations["createone_createone_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/getuser": {
         parameters: {
             query?: never;
@@ -61,10 +78,51 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/fetch_rec": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Fetch Rec */
+        get: operations["fetch_rec_fetch_rec_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/proxy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Proxy */
+        get: operations["proxy_proxy_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** Body_createone_createone_post */
+        Body_createone_createone_post: {
+            /** Telegram Id */
+            telegram_id: number;
+            /** Chat Id */
+            chat_id: number;
+        };
         /** Body_setup_setup_post */
         Body_setup_setup_post: {
             /** User Id */
@@ -73,6 +131,34 @@ export interface components {
             settings: {
                 [key: string]: string[];
             };
+        };
+        /** DefaultRecommendation */
+        DefaultRecommendation: {
+            /** Id */
+            id?: number;
+            /**
+             * Date
+             * Format: date-time
+             */
+            date: string;
+            /** User Id */
+            user_id: number;
+            /** Source */
+            source: string;
+            /** Author */
+            author?: string | null;
+            /** Title */
+            title: string;
+            /** Description */
+            description?: string | null;
+            /** Url */
+            url: string;
+            /** Url To Image */
+            url_to_image?: string | null;
+            /** Published Dt */
+            published_dt?: string | null;
+            /** Rank */
+            rank: number;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -137,6 +223,39 @@ export interface operations {
             };
         };
     };
+    createone_createone_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Body_createone_createone_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     getuser_getuser_get: {
         parameters: {
             query: {
@@ -190,6 +309,70 @@ export interface operations {
                     "application/json": {
                         [key: string]: string;
                     };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    fetch_rec_fetch_rec_get: {
+        parameters: {
+            query: {
+                telegram_id: number;
+                date_str?: string | null;
+                mode?: ("am" | "pm") | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DefaultRecommendation"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    proxy_proxy_get: {
+        parameters: {
+            query: {
+                url: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/html": string;
                 };
             };
             /** @description Validation Error */

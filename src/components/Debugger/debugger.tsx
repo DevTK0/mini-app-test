@@ -13,7 +13,7 @@ export const Debugger: FC = () => {
 
     const containerStyle = {
         position: "fixed" as const,
-        bottom: "20px",
+        top: "20px",
         right: "20px",
         background: "#000",
         color: "#fff",
@@ -157,6 +157,7 @@ export const Debugger: FC = () => {
                                 botInline: launchParams?.tgWebAppBotInline,
                                 platform: launchParams?.tgWebAppPlatform,
                                 themeParams: launchParams?.tgWebAppThemeParams,
+                                startParams: launchParams?.tgWebAppStartParam,
                             },
                             null,
                             2

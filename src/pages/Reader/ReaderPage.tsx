@@ -22,34 +22,38 @@ import {
     FaThumbsUp,
 } from "react-icons/fa";
 
-interface PageData {
-    url: string;
-    vote: "up" | "down" | null;
-}
+// interface PageData {
+//     url: string;
+//     vote: "up" | "down" | null;
+// }
+
+type GetResponse =
+    paths["/fetch_rec"]["get"]["responses"]["200"]["content"]["application/json"];
+type PageData = NonNullable<GetResponse>;
+const url = "https://c534-137-132-26-145.ngrok-free.app";
 
 export const ReaderPage: FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
-    const { tgWebAppThemeParams: theme } = useLaunchParams();
+    const {
+        tgWebAppThemeParams: theme,
+        tgWebAppData: app,
+        tgWebAppStartParam: startParam,
+    } = useLaunchParams();
     const isDark = useSignal(isMiniAppDark);
-    const [pages, setPages] = useState<PageData[]>([
-        {
-            url: "",
-            vote: null,
-        },
-    ]);
+    const [date, time_period] = startParam?.split("_") || [];
+    const [pages, setPages] = useState<PageData>([]);
 
     const client = createClient<paths>({
         headers: {
             "ngrok-skip-browser-warning": "true",
         },
-        baseUrl: "http://127.0.0.1:8000",
+        baseUrl: url,
     });
 
     useEffect(() => {
         const fetchRec = async () => {
-            const launchParams = useLaunchParams();
-            const telegramId = launchParams?.tgWebAppData?.user?.id;
+            const telegramId = app?.user?.id;
 
             if (!telegramId) {
                 console.error("No Telegram ID found in launch params");
@@ -57,19 +61,25 @@ export const ReaderPage: FC = () => {
             }
 
             try {
-                console.log(client);
-                // const { data, error } = await client.GET("/getuser", {
-                //     params: {
-                //         query: {
-                //             telegram_id: telegramId,
-                //         },
-                //     },
-                // });
-                // if (data) {
-                //     setPages(data);
-                // } else if (error) {
-                //     console.error("Error fetching user data:", error);
-                // }
+                const { data, error } = await client.GET("/fetch_rec", {
+                    params: {
+                        query: {
+                            telegram_id: telegramId,
+                            date: date,
+                            time_period:
+                                time_period == "am" || time_period == "pm"
+                                    ? time_period
+                                    : null,
+                        },
+                    },
+                });
+
+                console.log(data);
+                if (data) {
+                    setPages(data);
+                } else if (error) {
+                    console.error("Error fetching user data:", error);
+                }
             } catch (err) {
                 console.error("Error in API call:", err);
             }
@@ -82,13 +92,19 @@ export const ReaderPage: FC = () => {
         setPages((currentPages) => {
             return currentPages.map((page, index) => {
                 if (index === currentIndex) {
+                    console.log(voteType);
                     // Toggle vote if clicking the same button again
-                    const newVote = page.vote === voteType ? null : voteType;
-                    return { ...page, vote: newVote };
+                    // const newVote = page.vote === voteType ? null : voteType;
+                    // return { ...page, vote: newVote };
                 }
                 return page;
             });
         });
+    };
+
+    const copyToClipboard = async () => {
+        if (pages[currentIndex])
+            await navigator.clipboard.writeText(pages[currentIndex]?.url);
     };
 
     const goToPrevious = () => {
@@ -106,7 +122,8 @@ export const ReaderPage: FC = () => {
     };
 
     const progressValue = ((currentIndex + 1) / pages.length) * 100;
-    const currentVote = pages[currentIndex].vote;
+    // const currentVote = pages[currentIndex].vote;
+    const currentVote = null;
 
     return (
         <Page back={true}>
@@ -137,17 +154,22 @@ export const ReaderPage: FC = () => {
                                 <Spinner size="l" />
                             </div>
                         )}
-                        <iframe
-                            src={pages[currentIndex].url}
-                            style={{
-                                width: "100%",
-                                height: "100%",
-                                border: "none",
-                            }}
-                            title="Content"
-                            allowFullScreen
-                            onLoad={() => setIsLoading(false)}
-                        />
+                        {pages[currentIndex] && (
+                            <iframe
+                                // src={pages[currentIndex].url}
+                                src={`${url}/proxy?url=${encodeURIComponent(
+                                    pages[currentIndex].url
+                                )}`}
+                                style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    border: "none",
+                                }}
+                                title="Content"
+                                allowFullScreen
+                                onLoad={() => setIsLoading(false)}
+                            />
+                        )}
                     </div>
 
                     <FixedLayout
@@ -185,8 +207,11 @@ export const ReaderPage: FC = () => {
                                     whiteSpace: "nowrap",
                                     textOverflow: "ellipsis",
                                 }}
+                                onClick={copyToClipboard}
                             >
-                                http://example.com/
+                                {pages[currentIndex]
+                                    ? pages[currentIndex].url
+                                    : "http://example.com"}
                             </Button>
                         </div>
 
