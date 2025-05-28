@@ -62,7 +62,7 @@ if (import.meta.env.DEV) {
                 // user=%7B%22id%22%3A279058397%2C%22first_name%22%3A%22Vladislav%22%2C%22last_name%22...
                 // ```
                 // But in case you don't really need a valid init data, use this one:
-                ["tgWebAppStartParam", "2025-05-26_pm"],
+                ["tgWebAppStartParam", "2025-05-28_am"],
                 [
                     "tgWebAppData",
                     new URLSearchParams([

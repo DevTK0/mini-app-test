@@ -30,7 +30,8 @@ import {
 type GetResponse =
     paths["/fetch_rec"]["get"]["responses"]["200"]["content"]["application/json"];
 type PageData = NonNullable<GetResponse>;
-const url = "https://c534-137-132-26-145.ngrok-free.app";
+const url =
+    "https://sherpa-telegram-api-service.delightfulground-7cb093f7.southeastasia.azurecontainerapps.io";
 
 export const ReaderPage: FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -45,9 +46,6 @@ export const ReaderPage: FC = () => {
     const [pages, setPages] = useState<PageData>([]);
 
     const client = createClient<paths>({
-        headers: {
-            "ngrok-skip-browser-warning": "true",
-        },
         baseUrl: url,
     });
 
