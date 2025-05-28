@@ -1,14 +1,14 @@
 import { FC, useState } from "react";
 import { useStore } from "@tanstack/react-store";
-import { store } from "@/helpers/stores";
+import { form_store } from "@/helpers/stores";
 import { retrieveLaunchParams } from "@telegram-apps/sdk-react";
 
 export const Debugger: FC = () => {
     const [isExpanded, setIsExpanded] = useState(false);
-    const field = useStore(store, (state) => state.field);
-    const topics = useStore(store, (state) => state.topics);
-    const industries = useStore(store, (state) => state.industries);
-    const sources = useStore(store, (state) => state.sources);
+    const field = useStore(form_store, (state) => state.field);
+    const topics = useStore(form_store, (state) => state.topics);
+    const industries = useStore(form_store, (state) => state.industries);
+    const sources = useStore(form_store, (state) => state.sources);
     const launchParams = retrieveLaunchParams();
 
     const containerStyle = {

@@ -13,13 +13,13 @@ import { useState, type FC } from "react";
 import { Page } from "@/components/Page.tsx";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "@tanstack/react-store";
-import { store } from "@/helpers/stores";
+import { form_store } from "@/helpers/stores";
 import { SOURCE_OPTIONS } from "@/helpers/defaults";
 
 export const SourceFilterPage: FC = () => {
     const navigate = useNavigate();
 
-    const sources = useStore(store, (state) => state.sources);
+    const sources = useStore(form_store, (state) => state.sources);
     const [selectedSources, setSelectedSources] =
         useState<Set<string>>(sources);
 
@@ -31,7 +31,7 @@ export const SourceFilterPage: FC = () => {
             newSet.has(label) ? newSet.delete(label) : newSet.add(label);
 
             // Update store
-            store.setState((state) => ({
+            form_store.setState((state) => ({
                 ...state,
                 sources: newSet,
             }));

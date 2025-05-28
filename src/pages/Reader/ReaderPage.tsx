@@ -2,6 +2,7 @@ import { paths } from "@/api/schema";
 import { Page } from "@/components/Page";
 import {
     isMiniAppDark,
+    // on,
     useLaunchParams,
     useSignal,
 } from "@telegram-apps/sdk-react";
@@ -12,24 +13,23 @@ import {
     Button,
     Progress,
     Spinner,
+    // Tooltip,
 } from "@telegram-apps/telegram-ui";
 import createClient from "openapi-fetch";
-import { useEffect, useState, type FC } from "react";
+import { useEffect, useRef, useState, type FC } from "react";
 import {
     FaAngleLeft,
     FaAngleRight,
     FaThumbsDown,
     FaThumbsUp,
 } from "react-icons/fa";
+// import { useLocation, useNavigate } from "react-router-dom";
+import { page_store, PageData } from "@/helpers/stores";
+import { useStore } from "@tanstack/react-store";
 
-// interface PageData {
-//     url: string;
-//     vote: "up" | "down" | null;
-// }
-
-type GetResponse =
-    paths["/fetch_rec"]["get"]["responses"]["200"]["content"]["application/json"];
-type PageData = NonNullable<GetResponse>;
+// type GetResponse =
+//     paths["/fetch_rec"]["get"]["responses"]["200"]["content"]["application/json"];
+// type PageData = NonNullable<GetResponse>;
 const url =
     "https://sherpa-telegram-api-service.delightfulground-7cb093f7.southeastasia.azurecontainerapps.io";
 
@@ -43,7 +43,11 @@ export const ReaderPage: FC = () => {
     } = useLaunchParams();
     const isDark = useSignal(isMiniAppDark);
     const [date, time_period] = startParam?.split("_") || [];
-    const [pages, setPages] = useState<PageData>([]);
+    // const [pages, setPages] = useState<PageData[]>([]);
+    const pages = useStore(page_store, (state) => state.pages);
+
+    const ref = useRef(null);
+    // const [shown, setShown] = useState(false);
 
     const client = createClient<paths>({
         baseUrl: url,
@@ -58,25 +62,86 @@ export const ReaderPage: FC = () => {
                 return;
             }
 
-            try {
-                const { data, error } = await client.GET("/fetch_rec", {
-                    params: {
-                        query: {
-                            telegram_id: telegramId,
-                            date: date,
-                            time_period:
-                                time_period == "am" || time_period == "pm"
-                                    ? time_period
-                                    : null,
-                        },
-                    },
-                });
+            if (time_period != "am" && time_period != "pm") {
+                console.error("Invalid time_period.");
+                return;
+            }
 
-                console.log(data);
-                if (data) {
-                    setPages(data);
-                } else if (error) {
-                    console.error("Error fetching user data:", error);
+            try {
+                const { data: recommendations, error: fetch_error } =
+                    await client.GET("/fetch_rec", {
+                        params: {
+                            query: {
+                                telegram_id: telegramId,
+                                date: date,
+                                time_period: time_period,
+                            },
+                        },
+                    });
+
+                console.log("fetch: ", recommendations, date, time_period);
+
+                if (recommendations) {
+                    const rec: PageData[] = recommendations.map((rec) => ({
+                        id: rec.id!,
+                        url: rec.url,
+                        vote: null, // Initialize votes as null
+                    }));
+                    page_store.setState(() => ({
+                        pages: rec,
+                    }));
+
+                    console.log(rec);
+                    console.log(
+                        "content_ids: ",
+                        recommendations
+                            .map((rec) => rec.id)
+                            .filter((id) => id !== undefined) as number[]
+                    );
+
+                    const content_ids = recommendations
+                        .map((rec) => rec.id)
+                        .filter((id) => id !== undefined) as number[];
+                    console.log("inputs: ", telegramId, content_ids);
+
+                    // Fetch votes
+                    const { data: votes, error: vote_error } =
+                        await client.POST("/votes", {
+                            body: {
+                                content_ids: content_ids,
+                                telegram_id: telegramId,
+                            },
+                        });
+
+                    if (vote_error) {
+                        console.error("Error fetching votes: ", vote_error);
+                    }
+
+                    if (votes) {
+                        // Update the votes in the prepared data
+                        const updatedPages: PageData[] = rec.map((page) => {
+                            // Find matching vote for this page
+                            const vote = votes.find(
+                                (v) => v.content_id === page.id
+                            );
+                            // If vote exists, return page with updated vote, otherwise return unchanged page
+                            return vote
+                                ? {
+                                      ...page,
+                                      vote:
+                                          vote.details === "up" ? "up" : "down",
+                                  }
+                                : page;
+                        });
+
+                        page_store.setState(() => ({
+                            pages: updatedPages,
+                        }));
+                    }
+
+                    console.log("votes: ", votes);
+                } else if (fetch_error) {
+                    console.error("Error fetching user data:", fetch_error);
                 }
             } catch (err) {
                 console.error("Error in API call:", err);
@@ -84,20 +149,36 @@ export const ReaderPage: FC = () => {
         };
 
         fetchRec();
-    }, []);
+    }, [app?.user?.id, date, time_period]);
 
-    const handleVote = (voteType: "up" | "down") => {
-        setPages((currentPages) => {
-            return currentPages.map((page, index) => {
-                if (index === currentIndex) {
-                    console.log(voteType);
-                    // Toggle vote if clicking the same button again
-                    // const newVote = page.vote === voteType ? null : voteType;
-                    // return { ...page, vote: newVote };
-                }
-                return page;
-            });
+    const handleVote = async (voteType: "up" | "down") => {
+        const currentPage = pages[currentIndex];
+        if (!currentPage) return;
+
+        page_store.setState(() => ({
+            pages: pages.map((page, index) =>
+                index === currentIndex
+                    ? {
+                          ...page,
+                          vote: page.vote === voteType ? null : voteType,
+                      }
+                    : page
+            ),
+        }));
+
+        if (!app?.user?.id) return;
+
+        const { error: vote_error } = await client.POST("/vote", {
+            body: {
+                content_id: currentPage.id,
+                telegram_id: app?.user?.id,
+                value: voteType,
+            },
         });
+
+        if (vote_error) {
+            console.error("Error sending vote data:", vote_error);
+        }
     };
 
     const copyToClipboard = async () => {
@@ -120,8 +201,7 @@ export const ReaderPage: FC = () => {
     };
 
     const progressValue = ((currentIndex + 1) / pages.length) * 100;
-    // const currentVote = pages[currentIndex].vote;
-    const currentVote = null;
+    const currentVote = pages[currentIndex]?.vote || null;
 
     return (
         <Page back={true}>
@@ -158,6 +238,7 @@ export const ReaderPage: FC = () => {
                                 src={`${url}/proxy?url=${encodeURIComponent(
                                     pages[currentIndex].url
                                 )}`}
+                                key={url}
                                 style={{
                                     width: "100%",
                                     height: "100%",
@@ -185,14 +266,18 @@ export const ReaderPage: FC = () => {
                             }}
                         >
                             <Button
-                                mode={false ? "gray" : "bezeled"}
+                                mode={
+                                    pages[currentIndex]?.vote
+                                        ? "bezeled"
+                                        : "gray"
+                                }
                                 style={{
                                     height: "24px",
                                     padding: "0 8px",
                                     minWidth: "auto",
                                 }}
                             >
-                                +100
+                                +5
                             </Button>
                             <Button
                                 mode="plain"
@@ -209,7 +294,7 @@ export const ReaderPage: FC = () => {
                             >
                                 {pages[currentIndex]
                                     ? pages[currentIndex].url
-                                    : "http://example.com"}
+                                    : "loading..."}
                             </Button>
                         </div>
 
@@ -241,9 +326,11 @@ export const ReaderPage: FC = () => {
                             }}
                         >
                             <Button
+                                ref={ref}
                                 mode="plain"
                                 size="s"
                                 onClick={goToPrevious}
+                                // onClick={() => setShown(!shown)}
                                 disabled={currentIndex === 0}
                                 style={{
                                     flex: 0.5,
@@ -251,6 +338,16 @@ export const ReaderPage: FC = () => {
                             >
                                 <FaAngleLeft />
                             </Button>
+                            {/* {shown && (
+                                <Tooltip
+                                    placement="top-start"
+                                    mode={isDark ? "light" : "dark"}
+                                    targetRef={ref}
+                                >
+                                    Vote on the article to get points!
+                                </Tooltip>
+                            )} */}
+
                             <Button
                                 size="s"
                                 mode={

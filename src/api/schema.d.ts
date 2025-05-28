@@ -95,6 +95,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/vote": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Vote */
+        post: operations["vote_vote_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/votes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Votes */
+        post: operations["votes_votes_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/proxy": {
         parameters: {
             query?: never;
@@ -132,8 +166,48 @@ export interface components {
                 [key: string]: string[];
             };
         };
-        /** DefaultRecommendation */
-        DefaultRecommendation: {
+        /** Body_vote_vote_post */
+        Body_vote_vote_post: {
+            /** Content Id */
+            content_id: number;
+            /** Telegram Id */
+            telegram_id: number;
+            /**
+             * Value
+             * @enum {string}
+             */
+            value: "up" | "down";
+        };
+        /** Body_votes_votes_post */
+        Body_votes_votes_post: {
+            /** Content Ids */
+            content_ids: number[];
+            /** Telegram Id */
+            telegram_id: number;
+        };
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
+        };
+        /** InteractionV1 */
+        InteractionV1: {
+            /** Id */
+            id?: number;
+            /** User Id */
+            user_id: number;
+            /** Content Id */
+            content_id: number;
+            /**
+             * Type
+             * @constant
+             */
+            type: "vote";
+            /** Details */
+            details: string;
+        };
+        /** RecommendationV1 */
+        RecommendationV1: {
             /** Id */
             id?: number;
             /**
@@ -160,11 +234,6 @@ export interface components {
             /** Rank */
             rank: number;
         };
-        /** HTTPValidationError */
-        HTTPValidationError: {
-            /** Detail */
-            detail?: components["schemas"]["ValidationError"][];
-        };
         /** User */
         User: {
             /** Id */
@@ -179,9 +248,14 @@ export interface components {
              */
             join_dt?: string;
             /** Settings */
-            settings?: {
+            settings: {
                 [key: string]: string[];
             };
+            /**
+             * Strategy
+             * @enum {string}
+             */
+            strategy: "v1" | "v2";
         };
         /** ValidationError */
         ValidationError: {
@@ -326,8 +400,8 @@ export interface operations {
         parameters: {
             query: {
                 telegram_id: number;
-                date_str?: string | null;
-                mode?: ("am" | "pm") | null;
+                date: string;
+                time_period: "am" | "pm";
             };
             header?: never;
             path?: never;
@@ -341,7 +415,73 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["DefaultRecommendation"][];
+                    "application/json": components["schemas"]["RecommendationV1"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    vote_vote_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Body_vote_vote_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    votes_votes_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Body_votes_votes_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InteractionV1"][];
                 };
             };
             /** @description Validation Error */

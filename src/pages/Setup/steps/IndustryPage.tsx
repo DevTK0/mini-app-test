@@ -13,12 +13,12 @@ import { Page } from "@/components/Page.tsx";
 import { useNavigate } from "react-router-dom";
 import { INDUSTRY } from "@/helpers/defaults";
 import { useStore } from "@tanstack/react-store";
-import { store } from "@/helpers/stores";
+import { form_store } from "@/helpers/stores";
 
 export const IndustryPage: FC = () => {
     const navigate = useNavigate();
 
-    const industries = useStore(store, (state) => state.industries);
+    const industries = useStore(form_store, (state) => state.industries);
     const [selectedIndustries, setSelectedIndustries] = useState<Set<string>>(
         industries ?? new Set<string>()
     );
@@ -31,7 +31,7 @@ export const IndustryPage: FC = () => {
             newSet.has(label) ? newSet.delete(label) : newSet.add(label);
 
             // Update store
-            store.setState((state) => ({
+            form_store.setState((state) => ({
                 ...state,
                 industries: newSet,
             }));

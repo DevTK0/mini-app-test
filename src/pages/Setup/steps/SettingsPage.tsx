@@ -16,7 +16,7 @@ import { Page } from "@/components/Page.tsx";
 import createClient from "openapi-fetch";
 import { paths } from "@/api/schema";
 import { useStore } from "@tanstack/react-store";
-import { store } from "@/helpers/stores";
+import { form_store } from "@/helpers/stores";
 
 type GetUserResponse =
     paths["/getuser"]["get"]["responses"]["200"]["content"]["application/json"];
@@ -28,9 +28,9 @@ export const SettingsPage: FC = () => {
     // const [dailyNotifications, setDailyNotifications] = useState(true);
 
     // Get store values
-    const topics = useStore(store, (state) => state.topics);
-    const industries = useStore(store, (state) => state.industries);
-    const sources = useStore(store, (state) => state.sources);
+    const topics = useStore(form_store, (state) => state.topics);
+    const industries = useStore(form_store, (state) => state.industries);
+    const sources = useStore(form_store, (state) => state.sources);
 
     const client = createClient<paths>({
         headers: {

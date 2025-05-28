@@ -13,13 +13,13 @@ import { useState, type FC } from "react";
 import { Page } from "@/components/Page.tsx";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "@tanstack/react-store";
-import { store } from "@/helpers/stores";
+import { form_store } from "@/helpers/stores";
 import { TOPIC_OPTIONS } from "@/helpers/defaults";
 
 export const TopicsPage: FC = () => {
     const navigate = useNavigate();
 
-    const topics = useStore(store, (state) => state.topics);
+    const topics = useStore(form_store, (state) => state.topics);
     const [selectedTopics, setSelectedTopics] = useState<Set<string>>(topics);
 
     const updateTopics = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,7 +32,7 @@ export const TopicsPage: FC = () => {
                 : newSet.add(topicLabel);
 
             // Update store
-            store.setState((state) => ({
+            form_store.setState((state) => ({
                 ...state,
                 topics: newSet,
             }));

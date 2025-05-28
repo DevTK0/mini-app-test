@@ -12,14 +12,14 @@ import { useState, type FC } from "react";
 
 import { Page } from "@/components/Page.tsx";
 import { useNavigate } from "react-router-dom";
-import { store } from "@/helpers/stores";
+import { form_store } from "@/helpers/stores";
 import { useStore } from "@tanstack/react-store";
 import { FIELD } from "@/helpers/defaults";
 
 export const FieldPage: FC = () => {
     const navigate = useNavigate();
 
-    const field = useStore(store, (state) => state.field);
+    const field = useStore(form_store, (state) => state.field);
     const [selectedField, setSelectedField] = useState<string>(field ?? "");
 
     const updateField = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,7 +28,7 @@ export const FieldPage: FC = () => {
         setSelectedField(value);
 
         // Update store
-        store.setState((state) => ({
+        form_store.setState((state) => ({
             ...state,
             field: value,
         }));
