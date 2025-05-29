@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import { useStore } from "@tanstack/react-store";
-import { setup_store } from "@/helpers/stores";
+import { page_store, setup_store } from "@/helpers/stores";
 import { retrieveLaunchParams } from "@telegram-apps/sdk-react";
 
 export const Debugger: FC = () => {
@@ -11,6 +11,7 @@ export const Debugger: FC = () => {
     const sources = useStore(setup_store, (state) => state.sources);
     const notification = useStore(setup_store, (state) => state.notifications);
     const recommender = useStore(setup_store, (state) => state.recommender);
+    const pages = useStore(page_store, (state) => state.pages);
     const launchParams = retrieveLaunchParams();
 
     const containerStyle = {
@@ -71,6 +72,15 @@ export const Debugger: FC = () => {
             {/* Store Data */}
             <div style={{ marginBottom: "16px" }}>
                 <strong style={{ color: "#00ff00" }}>Store Data:</strong>
+
+                <div style={{ marginBottom: "8px" }}>
+                    <strong>Pages:</strong>
+                    <div style={{ marginLeft: "8px" }}>
+                        {Array.from(pages).map((page) => (
+                            <div key={page.id}>• {page.url}</div>
+                        ))}
+                    </div>
+                </div>
 
                 <div style={{ marginBottom: "8px" }}>
                     <strong>Field:</strong>

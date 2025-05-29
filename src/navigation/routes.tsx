@@ -8,6 +8,7 @@ import { IndustryPage } from "@/pages/Setup/steps/IndustryPage";
 import { FieldPage } from "@/pages/Setup/steps/FieldPage";
 import { DifficultyPage } from "@/pages/Setup/steps/DifficultyPage";
 import { SetupPage } from "@/pages/Setup/SetupPage";
+import { DirectPage } from "@/pages/Direct/DirectPage";
 
 interface Route {
     path: string;
@@ -26,4 +27,6 @@ export const routes: Route[] = [
     { path: "/settings", Component: SettingsPage },
 
     { path: "/reader", Component: ReaderPage },
+
+    { path: "/direct", Component: DirectPage },
 ];

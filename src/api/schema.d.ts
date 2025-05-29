@@ -130,6 +130,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/direct": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Direct Fetch */
+        get: operations["direct_fetch_direct_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/proxy": {
         parameters: {
             query?: never;
@@ -192,6 +209,39 @@ export interface components {
             content_ids: number[];
             /** Telegram Id */
             telegram_id: number;
+        };
+        /** ContentProcessed */
+        ContentProcessed: {
+            /** Id */
+            id?: number;
+            /** Source Id */
+            source_id: number;
+            /** Title */
+            title?: string | null;
+            /** Url */
+            url: string;
+            /** Body Text */
+            body_text?: string | null;
+            /** Summary */
+            summary?: string | null;
+            /**
+             * Sentiment Tag
+             * @enum {string}
+             */
+            sentiment_tag: "positive" | "negative" | "neutral";
+            /** Ner Tag */
+            ner_tag?: {
+                [key: string]: string[];
+            };
+            /** Keyword Tag */
+            keyword_tag?: {
+                [key: string]: string[];
+            };
+            /**
+             * Published Dt
+             * Format: date-time
+             */
+            published_dt: string;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -526,6 +576,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["InteractionV1"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    direct_fetch_direct_get: {
+        parameters: {
+            query: {
+                content_id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ContentProcessed"][];
                 };
             };
             /** @description Validation Error */
