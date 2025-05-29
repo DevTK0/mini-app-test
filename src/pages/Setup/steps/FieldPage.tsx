@@ -8,30 +8,23 @@ import {
     Radio,
     Input,
 } from "@telegram-apps/telegram-ui";
-import { useState, type FC } from "react";
+import { type FC } from "react";
 
 import { Page } from "@/components/Page.tsx";
 import { useNavigate } from "react-router-dom";
-import { form_store } from "@/helpers/stores";
+import { setField, setup_store } from "@/helpers/stores";
 import { useStore } from "@tanstack/react-store";
 import { FIELD } from "@/helpers/defaults";
 
 export const FieldPage: FC = () => {
     const navigate = useNavigate();
 
-    const field = useStore(form_store, (state) => state.field);
-    const [selectedField, setSelectedField] = useState<string>(field ?? "");
+    const field = useStore(setup_store, (state) => state.field);
 
     const updateField = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.name;
 
-        setSelectedField(value);
-
-        // Update store
-        form_store.setState((state) => ({
-            ...state,
-            field: value,
-        }));
+        setField(value);
     };
 
     return (
@@ -42,7 +35,7 @@ export const FieldPage: FC = () => {
                     margin: "0 16px", // Adds horizontal margin
                 }}
             >
-                <Steps count={6} progress={1} />
+                <Steps count={7} progress={2} />
 
                 <LargeTitle weight="3">What field do you work in?</LargeTitle>
 
@@ -71,7 +64,7 @@ export const FieldPage: FC = () => {
                                         name={topic.id}
                                         id={topic.label}
                                         value={topic.id}
-                                        checked={selectedField === topic.id}
+                                        checked={field === topic.id}
                                         onChange={updateField}
                                     />
                                 </div>
@@ -81,9 +74,7 @@ export const FieldPage: FC = () => {
                         </Chip>
                     ))}
                 </div>
-                {selectedField === "others" && (
-                    <Input header="Please state which:" />
-                )}
+                {field === "others" && <Input header="Please state which:" />}
                 <div style={{ height: 72 }} />
 
                 <FixedLayout
@@ -94,6 +85,7 @@ export const FieldPage: FC = () => {
                     <Button
                         size="m"
                         stretched
+                        disabled={!field}
                         onClick={() => {
                             navigate("/industry");
                             window.scrollTo({

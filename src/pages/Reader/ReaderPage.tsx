@@ -1,4 +1,3 @@
-import { paths } from "@/api/schema";
 import { Page } from "@/components/Page";
 import {
     isMiniAppDark,
@@ -15,7 +14,6 @@ import {
     Spinner,
     // Tooltip,
 } from "@telegram-apps/telegram-ui";
-import createClient from "openapi-fetch";
 import { useEffect, useRef, useState, type FC } from "react";
 import {
     FaAngleLeft,
@@ -26,12 +24,11 @@ import {
 // import { useLocation, useNavigate } from "react-router-dom";
 import { page_store, PageData } from "@/helpers/stores";
 import { useStore } from "@tanstack/react-store";
+import { client, url } from "@/helpers/api";
 
 // type GetResponse =
 //     paths["/fetch_rec"]["get"]["responses"]["200"]["content"]["application/json"];
 // type PageData = NonNullable<GetResponse>;
-const url =
-    "https://sherpa-telegram-api-service.delightfulground-7cb093f7.southeastasia.azurecontainerapps.io";
 
 export const ReaderPage: FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -48,10 +45,6 @@ export const ReaderPage: FC = () => {
 
     const ref = useRef(null);
     // const [shown, setShown] = useState(false);
-
-    const client = createClient<paths>({
-        baseUrl: url,
-    });
 
     useEffect(() => {
         const fetchRec = async () => {
@@ -238,7 +231,7 @@ export const ReaderPage: FC = () => {
                                 src={`${url}/proxy?url=${encodeURIComponent(
                                     pages[currentIndex].url
                                 )}`}
-                                key={url}
+                                // key={url}
                                 style={{
                                     width: "100%",
                                     height: "100%",

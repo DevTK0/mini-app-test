@@ -68,7 +68,8 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Get Settings */
+        get: operations["get_settings_setup_get"];
         put?: never;
         /** Setup */
         post: operations["setup_setup_post"];
@@ -159,12 +160,19 @@ export interface components {
         };
         /** Body_setup_setup_post */
         Body_setup_setup_post: {
-            /** User Id */
-            user_id: number;
+            /** Telegram Id */
+            telegram_id: number;
             /** Settings */
             settings: {
-                [key: string]: string[];
+                [key: string]: string[] | string;
             };
+            /** Notification */
+            notification: boolean;
+            /**
+             * Recommender
+             * @enum {string}
+             */
+            recommender: "v1" | "v2";
         };
         /** Body_vote_vote_post */
         Body_vote_vote_post: {
@@ -249,13 +257,18 @@ export interface components {
             join_dt?: string;
             /** Settings */
             settings: {
-                [key: string]: string[];
+                [key: string]: string[] | string;
             };
             /**
              * Strategy
              * @enum {string}
              */
             strategy: "v1" | "v2";
+            /**
+             * Push Notifications
+             * @default true
+             */
+            push_notifications: boolean;
         };
         /** ValidationError */
         ValidationError: {
@@ -348,6 +361,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["User"] | null;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_settings_setup_get: {
+        parameters: {
+            query: {
+                telegram_id: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["User"];
                 };
             };
             /** @description Validation Error */

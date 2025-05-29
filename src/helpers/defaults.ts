@@ -1,252 +1,143 @@
+export const INDUSTRY_OPTIONS = [
+    {
+        id: "ai healthcare",
+        label: "Healthcare",
+        category: "Domain Applications",
+    },
+    {
+        id: "ai finance",
+        label: "Finance",
+        category: "Domain Applications",
+    },
+    {
+        id: "ai education",
+        label: "Education",
+        category: "Domain Applications",
+    },
+    {
+        id: "ai manufacturing",
+        label: "Manufacturing",
+        category: "Domain Applications",
+    },
+    {
+        id: "ai cybersecurity",
+        label: "Security",
+        category: "Domain Applications",
+    },
+    {
+        id: "ai music",
+        label: "Music",
+        category: "Domain Applications",
+    },
+    {
+        id: "ai art",
+        label: "Art",
+        category: "Domain Applications",
+    },
+];
+
 export const TOPIC_OPTIONS = [
     // Core AI & ML
-    { id: "ml", label: "Machine Learning", category: "Core AI & ML" },
-    { id: "dl", label: "Deep Learning", category: "Core AI & ML" },
-    { id: "rl", label: "Reinforcement Learning", category: "Core AI & ML" },
     {
-        id: "transfer",
-        label: "Transfer Learning",
+        id: "ai machine learning",
+        label: "Machine Learning",
         category: "Core AI & ML",
     },
-    { id: "meta", label: "Meta Learning", category: "Core AI & ML" },
     {
-        id: "optimization",
-        label: "AI Optimization",
+        id: "ai deep learning",
+        label: "Deep Learning",
+        category: "Core AI & ML",
+    },
+    {
+        id: "ai reinforcement learning",
+        label: "Reinforcement Learning",
+        category: "Core AI & ML",
+    },
+    {
+        id: "generative ai",
+        label: "Generative AI",
         category: "Core AI & ML",
     },
 
-    // Language & Vision
     {
-        id: "nlp",
-        label: "Natural Language Processing",
-        category: "Language & Vision",
-    },
-    { id: "cv", label: "Computer Vision", category: "Language & Vision" },
-    {
-        id: "llm",
+        id: "large language models",
         label: "Large Language Models",
-        category: "Language & Vision",
+        category: "Modality",
+    },
+
+    {
+        id: "speech recognition",
+        label: "Speech Recognition",
+        category: "Modality",
     },
     {
-        id: "speech",
-        label: "Speech Recognition & Synthesis",
-        category: "Language & Vision",
-    },
-    {
-        id: "multimodal",
+        id: "multimodal ai",
         label: "Multimodal AI",
-        category: "Language & Vision",
+        category: "Modality",
     },
 
     // Advanced AI Systems
     {
-        id: "genai",
-        label: "Generative AI",
-        category: "Advanced AI Systems",
+        id: "ai agents",
+        label: "AI Agents",
+        category: "AI Systems",
     },
     {
-        id: "agi",
+        id: "artificial general intelligence",
         label: "Artificial General Intelligence",
-        category: "Advanced AI Systems",
+        category: "AI Systems",
     },
     {
-        id: "robotics",
+        id: "robotics ai",
         label: "Robotics & Automation",
-        category: "Advanced AI Systems",
+        category: "AI Systems",
     },
     {
-        id: "augmented",
-        label: "Augmented Intelligence",
-        category: "Advanced AI Systems",
-    },
-
-    // AI Infrastructure
-    {
-        id: "mlops",
-        label: "Machine Learning Operations",
-        category: "AI Infrastructure",
-    },
-    { id: "edge", label: "Edge AI & IoT", category: "AI Infrastructure" },
-    {
-        id: "quantum",
-        label: "Quantum AI & Computing",
-        category: "AI Infrastructure",
-    },
-    {
-        id: "neuromorphic",
-        label: "Neuromorphic Computing",
-        category: "AI Infrastructure",
-    },
-    {
-        id: "federated",
-        label: "Federated Learning",
-        category: "AI Infrastructure",
-    },
-    {
-        id: "automl",
-        label: "AutoML & Neural Architecture Search",
-        category: "AI Infrastructure",
+        id: "ai mcp",
+        label: "MCP",
+        category: "AI Systems",
     },
 
     // AI Ethics & Safety
     {
-        id: "ethics",
+        id: "ai ethics",
         label: "AI Ethics & Responsibility",
         category: "AI Ethics & Safety",
     },
     {
-        id: "safety",
-        label: "AI Safety & Security",
-        category: "AI Ethics & Safety",
-    },
-    {
-        id: "privacy",
+        id: "ai privacy",
         label: "AI Privacy & Data Protection",
         category: "AI Ethics & Safety",
-    },
-    {
-        id: "fairness",
-        label: "AI Fairness & Bias",
-        category: "AI Ethics & Safety",
-    },
-    {
-        id: "explainable",
-        label: "Explainable AI",
-        category: "AI Ethics & Safety",
-    },
-
-    // Domain Applications
-    {
-        id: "healthcare",
-        label: "AI in Healthcare",
-        category: "Domain Applications",
-    },
-    {
-        id: "finance",
-        label: "AI in Finance",
-        category: "Domain Applications",
-    },
-    {
-        id: "timeseries",
-        label: "Time Series Analysis",
-        category: "Domain Applications",
-    },
-    {
-        id: "knowledge",
-        label: "Knowledge Graphs & Reasoning",
-        category: "Domain Applications",
     },
 ];
 
 export const SOURCE_OPTIONS = [
-    // Company Blogs
-    { id: "openai", label: "OpenAI Blog", category: "Company Blogs" },
+    // Companies
+    { id: "openai", label: "OpenAI", category: "Companies" },
     {
         id: "deepmind",
         label: "Google DeepMind",
-        category: "Company Blogs",
-    },
-    { id: "anthropic", label: "Anthropic", category: "Company Blogs" },
-    { id: "meta_ai", label: "Meta AI", category: "Company Blogs" },
-    { id: "nvidia_ai", label: "NVIDIA AI", category: "Company Blogs" },
-    {
-        id: "aws_ml",
-        label: "AWS Machine Learning",
-        category: "Company Blogs",
+        category: "Companies",
     },
     {
-        id: "microsoft_research",
-        label: "Microsoft Research",
-        category: "Company Blogs",
+        id: "google ai",
+        label: "Google AI",
+        category: "Companies",
     },
-
-    // Research Blogs
+    { id: "anthropic", label: "Anthropic", category: "Companies" },
+    { id: "deepseek", label: "Deepseek", category: "Companies" },
+    { id: "meta ai", label: "Meta", category: "Companies" },
+    { id: "nvidia ai", label: "NVIDIA", category: "Companies" },
+    { id: "apple ai", label: "Apple", category: "Companies" },
     {
-        id: "bair",
-        label: "Berkeley AI Research (BAIR)",
-        category: "Research Blogs",
-    },
-    { id: "mit_ai", label: "MIT AI News", category: "Research Blogs" },
-
-    // Papers
-    { id: "vitalab", label: "VITALab", category: "Papers" },
-    {
-        id: "papers_with_code",
-        label: "Papers With Code",
-        category: "Papers",
-    },
-    { id: "arxiv", label: "arXiv", category: "Papers" },
-
-    // Opinion & News
-    {
-        id: "techcrunch_ai",
-        label: "TechCrunch AI",
-        category: "Opinion & News",
+        id: "Amazon AI",
+        label: "Amazon",
+        category: "Companies",
     },
     {
-        id: "venturebeat_ai",
-        label: "VentureBeat AI",
-        category: "Opinion & News",
-    },
-    {
-        id: "marktechpost",
-        label: "Marktechpost",
-        category: "Opinion & News",
-    },
-
-    // AI Singapore
-    {
-        id: "aisg_governance",
-        label: "AI Singapore Governance Updates",
-        category: "AI Singapore",
-    },
-    {
-        id: "aisg_roundtable",
-        label: "AI Singapore Roundtable",
-        category: "AI Singapore",
-    },
-];
-
-export const INDUSTRY = [
-    {
-        id: "finance",
-        label: "Finance",
-    },
-    {
-        id: "maritime",
-        label: "Maritime",
-    },
-    {
-        id: "transport",
-        label: "Transport",
-    },
-    {
-        id: "medical",
-        label: "Medical",
-    },
-    {
-        id: "technology",
-        label: "Technology",
-    },
-    {
-        id: "education",
-        label: "Education",
-    },
-    {
-        id: "environment",
-        label: "Environment",
-    },
-    {
-        id: "real_estate",
-        label: "Real Estate",
-    },
-    {
-        id: "manufacturing",
-        label: "Manufacturing",
-    },
-    {
-        id: "retail",
-        label: "Retail",
+        id: "microsoft ai",
+        label: "Microsoft",
+        category: "Companies",
     },
 ];
 

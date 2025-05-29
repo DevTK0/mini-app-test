@@ -22,7 +22,7 @@ export const DifficultyPage: FC = () => {
                     margin: "0 16px", // Adds horizontal margin
                 }}
             >
-                <Steps count={6} progress={5} />
+                <Steps count={7} progress={6} />
 
                 <LargeTitle weight="3">
                     What level of news are you comfortable with?
@@ -36,9 +36,9 @@ export const DifficultyPage: FC = () => {
                     }}
                 ></div>
                 <Select header="Select">
-                    <option>Light and easy </option>
-                    <option>Moderate with some depth </option>
-                    <option>In-depth and complex </option>
+                    <option value="easy">Light and easy </option>
+                    <option value="medium">Moderate with some depth </option>
+                    <option value="hard">In-depth and complex </option>
                 </Select>
                 <div style={{ height: 72 }} />
 

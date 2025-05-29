@@ -7,19 +7,20 @@ import {
     Chip,
     Multiselectable,
     Headline,
+    Caption,
 } from "@telegram-apps/telegram-ui";
 import { useState, type FC } from "react";
 
 import { Page } from "@/components/Page.tsx";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "@tanstack/react-store";
-import { form_store } from "@/helpers/stores";
+import { setTopics, setup_store } from "@/helpers/stores";
 import { TOPIC_OPTIONS } from "@/helpers/defaults";
 
 export const TopicsPage: FC = () => {
     const navigate = useNavigate();
 
-    const topics = useStore(form_store, (state) => state.topics);
+    const topics = useStore(setup_store, (state) => state.topics);
     const [selectedTopics, setSelectedTopics] = useState<Set<string>>(topics);
 
     const updateTopics = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,11 +32,7 @@ export const TopicsPage: FC = () => {
                 ? newSet.delete(topicLabel)
                 : newSet.add(topicLabel);
 
-            // Update store
-            form_store.setState((state) => ({
-                ...state,
-                topics: newSet,
-            }));
+            setTopics(Array.from(newSet));
 
             return newSet;
         });
@@ -53,11 +50,14 @@ export const TopicsPage: FC = () => {
                     margin: "0 16px", // Adds horizontal margin
                 }}
             >
-                <Steps count={6} progress={3} />
+                <Steps count={7} progress={4} />
 
                 <LargeTitle weight="3">
                     What topics are you interested in?
                 </LargeTitle>
+                <Caption level="1" weight="3">
+                    Pick at least 2.
+                </Caption>
 
                 <div
                     style={{
@@ -136,6 +136,7 @@ export const TopicsPage: FC = () => {
                                 behavior: "smooth",
                             });
                         }}
+                        disabled={topics.size < 2}
                     >
                         Next
                     </Button>

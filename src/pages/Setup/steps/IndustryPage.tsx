@@ -6,19 +6,20 @@ import {
     LargeTitle,
     Chip,
     Multiselectable,
+    Caption,
 } from "@telegram-apps/telegram-ui";
 import { useState, type FC } from "react";
 
 import { Page } from "@/components/Page.tsx";
 import { useNavigate } from "react-router-dom";
-import { INDUSTRY } from "@/helpers/defaults";
+import { INDUSTRY_OPTIONS } from "@/helpers/defaults";
 import { useStore } from "@tanstack/react-store";
-import { form_store } from "@/helpers/stores";
+import { setIndustries, setup_store } from "@/helpers/stores";
 
 export const IndustryPage: FC = () => {
     const navigate = useNavigate();
 
-    const industries = useStore(form_store, (state) => state.industries);
+    const industries = useStore(setup_store, (state) => state.industries);
     const [selectedIndustries, setSelectedIndustries] = useState<Set<string>>(
         industries ?? new Set<string>()
     );
@@ -30,17 +31,11 @@ export const IndustryPage: FC = () => {
             const newSet = new Set(prev);
             newSet.has(label) ? newSet.delete(label) : newSet.add(label);
 
-            // Update store
-            form_store.setState((state) => ({
-                ...state,
-                industries: newSet,
-            }));
+            setIndustries(Array.from(newSet));
 
             return newSet;
         });
     };
-
-    // const categories = [...new Set(AREAS_OF_INTEREST.map((option) => option.category))];
 
     return (
         <Page back={true}>
@@ -50,11 +45,14 @@ export const IndustryPage: FC = () => {
                     margin: "0 16px", // Adds horizontal margin
                 }}
             >
-                <Steps count={6} progress={2} />
+                <Steps count={7} progress={3} />
 
                 <LargeTitle weight="3">
                     What industries are you interested in?
                 </LargeTitle>
+                <Caption level="1" weight="3">
+                    Pick at least 2.
+                </Caption>
 
                 <div
                     style={{
@@ -63,7 +61,7 @@ export const IndustryPage: FC = () => {
                         flexWrap: "wrap",
                     }}
                 >
-                    {INDUSTRY.map((topic) => (
+                    {INDUSTRY_OPTIONS.map((topic) => (
                         <Chip
                             key={topic.id}
                             mode="mono"
@@ -110,6 +108,7 @@ export const IndustryPage: FC = () => {
                                 behavior: "smooth",
                             });
                         }}
+                        disabled={industries.size < 2}
                     >
                         Next
                     </Button>

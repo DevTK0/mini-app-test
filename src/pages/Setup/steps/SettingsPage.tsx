@@ -6,90 +6,71 @@ import {
     Button,
     LargeTitle,
     Switch,
-    Headline,
+    Select,
 } from "@telegram-apps/telegram-ui";
-import { useEffect, useState, type FC } from "react";
+import { ChangeEvent, useState, type FC } from "react";
 
 import { closeMiniApp, useLaunchParams } from "@telegram-apps/sdk-react";
 
 import { Page } from "@/components/Page.tsx";
-import createClient from "openapi-fetch";
-import { paths } from "@/api/schema";
 import { useStore } from "@tanstack/react-store";
-import { form_store } from "@/helpers/stores";
+import {
+    setNotifications,
+    setRecommender,
+    setup_store,
+} from "@/helpers/stores";
+import { client } from "@/helpers/api";
 
-type GetUserResponse =
-    paths["/getuser"]["get"]["responses"]["200"]["content"]["application/json"];
-type UserData = NonNullable<GetUserResponse>;
+// type GetUserResponse =
+//     paths["/getuser"]["get"]["responses"]["200"]["content"]["application/json"];
+// type UserData = NonNullable<GetUserResponse>;
 
 export const SettingsPage: FC = () => {
-    const [userData, setUserData] = useState<UserData | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-    // const [dailyNotifications, setDailyNotifications] = useState(true);
+    // const [notifications, setNotifications] = useState(true);
+    const launchParams = useLaunchParams();
+    const telegramId = launchParams?.tgWebAppData?.user?.id;
 
     // Get store values
-    const topics = useStore(form_store, (state) => state.topics);
-    const industries = useStore(form_store, (state) => state.industries);
-    const sources = useStore(form_store, (state) => state.sources);
+    const field = useStore(setup_store, (state) => state.field);
+    const topics = useStore(setup_store, (state) => state.topics);
+    const industries = useStore(setup_store, (state) => state.industries);
+    const sources = useStore(setup_store, (state) => state.sources);
+    const notifications = useStore(setup_store, (state) => state.notifications);
+    const recommender = useStore(setup_store, (state) => state.recommender);
 
-    const client = createClient<paths>({
-        headers: {
-            "ngrok-skip-browser-warning": "true",
-        },
-        baseUrl: "http://127.0.0.1:8000",
-    });
+    const handleNotificationChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setNotifications(event.target.checked);
+    };
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            const launchParams = useLaunchParams();
-            const telegramId = launchParams?.tgWebAppData?.user?.id;
-
-            if (!telegramId) {
-                console.error("No Telegram ID found in launch params");
-                return;
-            }
-
-            try {
-                const { data, error } = await client.GET("/getuser", {
-                    params: {
-                        query: {
-                            telegram_id: telegramId,
-                        },
-                    },
-                });
-
-                if (data) {
-                    setUserData(data);
-                } else if (error) {
-                    console.error("Error fetching user data:", error);
-                }
-            } catch (err) {
-                console.error("Error in API call:", err);
-            }
-        };
-
-        fetchUser();
-    }, []);
+    const handleRecommenderChange = (event: ChangeEvent<HTMLSelectElement>) => {
+        const version = event.target.value == "v2" ? "v2" : "v1";
+        setRecommender(version);
+    };
 
     const handleSubmit = async () => {
-        if (!userData?.id) {
-            console.error("No user ID available");
-            return;
-        }
-
         setIsSubmitting(true);
 
         try {
             const settings = {
+                ...(field !== null && { field }),
                 industries: Array.from(industries ?? new Set()),
                 sources: Array.from(sources ?? new Set()),
                 topics: Array.from(topics ?? new Set()),
             };
 
+            console.log("sending: ", settings, notifications);
+            if (!telegramId) {
+                console.error("Missing telegram id.");
+                return;
+            }
+
             const { error } = await client.POST("/setup", {
                 body: {
-                    user_id: userData.id,
+                    telegram_id: telegramId,
                     settings: settings,
+                    notification: notifications,
+                    recommender: recommender,
                 },
             });
 
@@ -113,26 +94,38 @@ export const SettingsPage: FC = () => {
                     margin: "0 16px", // Adds horizontal margin
                 }}
             >
-                <Steps count={6} progress={6} />
+                <Steps count={7} progress={7} />
                 <LargeTitle weight="3">
                     How would you like to configure AI News?
                 </LargeTitle>
-                <Headline
-                    weight="3"
-                    style={{
-                        marginBottom: 16,
-                    }}
-                >
-                    Notifications
-                </Headline>
+
                 <Cell
                     Component="label"
-                    after={<Switch defaultChecked />}
-                    description="Get notified of AI news daily."
+                    after={
+                        <Switch
+                            checked={notifications}
+                            onChange={handleNotificationChange}
+                        />
+                    }
+                    description="Get notified of AI news twice daily."
                     multiline
                 >
-                    Daily
+                    Notifications
                 </Cell>
+                <Cell
+                    after={
+                        <Select onChange={handleRecommenderChange}>
+                            <option>v1</option>
+                            <option disabled>v2</option>
+                        </Select>
+                    }
+                    Component="label"
+                    multiline
+                    description="Recommendation engine for AI news."
+                >
+                    Recommender
+                </Cell>
+
                 <FixedLayout
                     style={{
                         padding: 16,

@@ -7,19 +7,20 @@ import {
     Multiselectable,
     Chip,
     Headline,
+    Caption,
 } from "@telegram-apps/telegram-ui";
 import { useState, type FC } from "react";
 
 import { Page } from "@/components/Page.tsx";
 import { useNavigate } from "react-router-dom";
 import { useStore } from "@tanstack/react-store";
-import { form_store } from "@/helpers/stores";
+import { setSources, setup_store } from "@/helpers/stores";
 import { SOURCE_OPTIONS } from "@/helpers/defaults";
 
 export const SourceFilterPage: FC = () => {
     const navigate = useNavigate();
 
-    const sources = useStore(form_store, (state) => state.sources);
+    const sources = useStore(setup_store, (state) => state.sources);
     const [selectedSources, setSelectedSources] =
         useState<Set<string>>(sources);
 
@@ -30,11 +31,7 @@ export const SourceFilterPage: FC = () => {
             const newSet = new Set(prev);
             newSet.has(label) ? newSet.delete(label) : newSet.add(label);
 
-            // Update store
-            form_store.setState((state) => ({
-                ...state,
-                sources: newSet,
-            }));
+            setSources(Array.from(newSet));
 
             return newSet;
         });
@@ -52,10 +49,13 @@ export const SourceFilterPage: FC = () => {
                     margin: "0 16px", // Adds horizontal margin
                 }}
             >
-                <Steps count={6} progress={4} />
+                <Steps count={7} progress={5} />
                 <LargeTitle weight="3">
                     Which sources would you like to receive news from?
                 </LargeTitle>
+                <Caption level="1" weight="3">
+                    Pick at least 2.
+                </Caption>
                 <div
                     style={{
                         display: "flex",
@@ -140,6 +140,7 @@ export const SourceFilterPage: FC = () => {
                                 behavior: "smooth",
                             });
                         }}
+                        disabled={sources.size < 2}
                     >
                         Next
                     </Button>

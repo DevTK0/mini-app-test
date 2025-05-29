@@ -1,14 +1,16 @@
 import { FC, useState } from "react";
 import { useStore } from "@tanstack/react-store";
-import { form_store } from "@/helpers/stores";
+import { setup_store } from "@/helpers/stores";
 import { retrieveLaunchParams } from "@telegram-apps/sdk-react";
 
 export const Debugger: FC = () => {
     const [isExpanded, setIsExpanded] = useState(false);
-    const field = useStore(form_store, (state) => state.field);
-    const topics = useStore(form_store, (state) => state.topics);
-    const industries = useStore(form_store, (state) => state.industries);
-    const sources = useStore(form_store, (state) => state.sources);
+    const field = useStore(setup_store, (state) => state.field);
+    const topics = useStore(setup_store, (state) => state.topics);
+    const industries = useStore(setup_store, (state) => state.industries);
+    const sources = useStore(setup_store, (state) => state.sources);
+    const notification = useStore(setup_store, (state) => state.notifications);
+    const recommender = useStore(setup_store, (state) => state.recommender);
     const launchParams = retrieveLaunchParams();
 
     const containerStyle = {
@@ -101,6 +103,20 @@ export const Debugger: FC = () => {
                         {Array.from(sources).map((source) => (
                             <div key={source}>• {source}</div>
                         ))}
+                    </div>
+                </div>
+
+                <div style={{ marginBottom: "8px" }}>
+                    <strong>Recommender:</strong>
+                    <div style={{ marginLeft: "8px" }}>
+                        <div>{recommender}</div>
+                    </div>
+                </div>
+
+                <div style={{ marginBottom: "8px" }}>
+                    <strong>Notification:</strong>
+                    <div style={{ marginLeft: "8px" }}>
+                        <div>{String(notification)}</div>
                     </div>
                 </div>
             </div>
